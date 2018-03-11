@@ -94,7 +94,7 @@ function buildUpdateSql($tableName,$params,$where)
     {
         $where_arr = array();
 
-        foreach ($params as $key => $value)
+        foreach ($where as $key => $value)
         {
             $where_arr[] = "{$key} = '{$value}'";
         }

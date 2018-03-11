@@ -98,4 +98,66 @@ class LoginModel
 
     }
 
+    public function tokenAuth($userId,$userToken,$clientIp)
+    {
+
+        $tokenInfo = db_TokenModel::getTokenInfoByWhere($this->dc,array('cs_user_id' => $userId));
+        if($tokenInfo === false){
+            //数据库错误
+            return ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_DB_ERROR);
+        }
+
+
+        $tokenInfoNew = array();
+        foreach($tokenInfo as $item){
+            if($item['cs_login_ip'] == $clientIp){
+                $tokenInfoNew = $item;
+            }
+        }
+
+        if(empty($tokenInfoNew)){
+            //Token不存在
+            return ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_TOKEN_NOT_EXIST);
+        }
+
+        if(strtotime($tokenInfoNew['cs_expire_time']) < time()){
+            //Token过期
+            return ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_TOKEN_EXPIRE);
+        }
+
+        if($tokenInfoNew['cs_token'] != $userToken){
+            //Token错误
+            return ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_TOKEN_ERROR);
+        }
+
+
+        //Token认证成功
+        return ResponseModel::getResponse(MAIN_CODE_OK,SUB_CODE_OK);
+
+    }
+
+    public function getUserInfo($userId)
+    {
+        $userInfo = db_UserModel::getUserInfoByWhere($this->dc,array('cs_id' => $userId));
+        if($userInfo === false){
+            //数据库错误
+            return ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_DB_ERROR);
+        }
+
+        if(empty($userInfo))
+        {
+            //用户不存在
+            return ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_USER_NOT_EXIST);
+        }
+
+        $userInfoNew = array(
+            'userAccount' => $userInfo[0]['cs_user_account'],
+            'userName' => $userInfo[0]['cs_user_name'],
+            'userBirth' => $userInfo[0]['cs_user_birth'],
+            'createTime' => $userInfo[0]['cs_create_time'],
+        );
+
+        return ResponseModel::getResponse(MAIN_CODE_OK,SUB_CODE_OK,$userInfoNew);
+    }
+
 }

@@ -28,7 +28,6 @@ class db_TokenModel
     static public function modifyTokenByWhere($dc,$params,$where)
     {
         $sql = buildUpdateSql(self::$tableName,$params,$where);
-
         return $dc->execute($sql);
     }
 
