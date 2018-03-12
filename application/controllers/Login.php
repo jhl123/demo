@@ -13,7 +13,6 @@ class LoginController extends Yaf_Controller_Abstract {
 
         //参数接收
         $params = $this->getRequest()->getparams();
-
         $clientIp = $_SERVER['REMOTE_ADDR'];
 
         //参数检查
@@ -26,14 +25,17 @@ class LoginController extends Yaf_Controller_Abstract {
 
         if(!empty($lostParams)){
             $result = ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_PARAMS_ERROR,$lostParams);
-            echo json_encode($result);die;
+            $this->getView()->assign("respone", $result);
+            return true;
         }
 
 
         //登陆开始
         $loginMode = new LoginModel();
         $result = $loginMode->login($params['userAccount'],$params['userPassword'],$clientIp);
-        echo json_encode($result);die;
+
+        $this->getView()->assign("respone", $result);
+        return true;
 
     }
 
@@ -54,7 +56,9 @@ class LoginController extends Yaf_Controller_Abstract {
 
         if(!empty($lostParams)){
             $result = ResponseModel::getResponse(MAIN_CODE_FAIL,SUB_CODE_PARAMS_ERROR,$lostParams);
-            echo json_encode($result);die;
+
+            $this->getView()->assign("respone", $result);
+            return true;
         }
 
         $userMode = new LoginModel();
@@ -62,11 +66,14 @@ class LoginController extends Yaf_Controller_Abstract {
         $checkToken = $userMode->tokenAuth($params['userId'],$params['userToken'],$clientIp);
         if($checkToken['mainCode'] != MAIN_CODE_OK)
         {
-            echo json_encode($checkToken);die;
+            $this->getView()->assign("respone", $checkToken);
+            return true;
         }
 
         $result = $userMode->getUserInfo($params['userId']);
-        echo json_encode($result);die;
+
+        $this->getView()->assign("respone", $result);
+        return true;
 
     }
 
