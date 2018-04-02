@@ -1,3 +1,4 @@
+hahahahha
 可以按照以下步骤来部署和运行程序:
 1.请确保机器jhl@jianghaolindeMacBook-Pro.local已经安装了Yaf框架, 并且已经加载入PHP;
 2.把yafDemo目录Copy到Webserver的DocumentRoot目录下;
